@@ -57,15 +57,15 @@
         width: 80px;
         height: 80px;
         left: 160px;
-        background: url('https://static.wikia.nocookie.net/mrbean/images/c/c2/Mr._Bean_Cartoon.webp/revision/latest/scale-to-width/360?cb=20250430000419') no-repeat center/contain;
+        background: url('https://c1.klipartz.com/pngpicture/463/833/sticker-png-mr-bean-cartoon-television-television-show-drawing-animation-humour-cartoon-network-thumbnail.png') no-repeat center/contain;
         z-index: 2;
       }
       .objeto {
         position: absolute;
-        width: 120px;
-        height: 120px;
+        width: 60px; /* reduzido de 120px */
+        height: 60px; /* reduzido de 120px */
         background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
-        top: -120px;
+        top: -60px; /* ajustado para nova altura */
         left: 0;
         z-index: 1;
       }
@@ -73,8 +73,8 @@
         position: absolute;
         bottom: 10px;
         left: 160px;
-        width: 80px;
-        height: 80px;
+        width: 60px; /* reduzido */
+        height: 60px; /* reduzido */
         background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
         display: none;
         z-index: 3;
@@ -172,6 +172,8 @@
       const gameHeight = 600;
       const mrbeanWidth = 80;
       const mrbeanHeight = 80;
+      const objetoWidth = 60;
+      const objetoHeight = 60;
 
       let mrbeanX = 160;
       const mrbeanY = gameHeight - mrbeanHeight - 10;
@@ -193,15 +195,15 @@
       function createObjeto() {
         const objeto = document.createElement('div');
         objeto.classList.add('objeto');
-        objeto.style.left = Math.floor(Math.random() * (gameWidth - 120)) + 'px';
-        objeto.style.top = '-120px';
+        objeto.style.left = Math.floor(Math.random() * (gameWidth - objetoWidth)) + 'px';
+        objeto.style.top = -objetoHeight + 'px';
         game.appendChild(objeto);
 
         const fallSpeed = 3 + Math.random() * 2 + (level - 1) * 1.5;
 
         objetos.push({
           element: objeto,
-          y: -120,
+          y: -objetoHeight,
           x: parseInt(objeto.style.left),
           speed: fallSpeed,
         });
@@ -222,13 +224,11 @@
       function checkCollision(obj) {
         const objX = obj.x;
         const objY = obj.y;
-        const objWidth = 120;
-        const objHeight = 120;
 
         if (
           objX < mrbeanX + mrbeanWidth &&
-          objX + objWidth > mrbeanX &&
-          objY + objHeight > mrbeanY &&
+          objX + objetoWidth > mrbeanX &&
+          objY + objetoHeight > mrbeanY &&
           objY < mrbeanY + mrbeanHeight
         ) {
           return true;
@@ -408,7 +408,5 @@
     </script>
   </body>
 </html>
-
-
 
 
