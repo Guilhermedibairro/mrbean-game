@@ -61,14 +61,14 @@
       width: 80px;
       height: 80px;
       left: 160px;
-      background: url('https://raw.githubusercontent.com/seuUsuario/mrbean-game/main/images/mrbean.webp') no-repeat center/contain;
+      background: url('https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/mrbean.webp') no-repeat center/contain;
       z-index: 2;
     }
     .objeto {
       position: absolute;
       width: 120px;
       height: 120px;
-      background: url('https://raw.githubusercontent.com/seuUsuario/mrbean-game/main/images/scrapper.gif') no-repeat center/contain;
+      background: url('https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/scrapper.gif') no-repeat center/contain;
       top: -120px;
       left: 0;
       z-index: 1;
@@ -79,7 +79,7 @@
       left: 160px;
       width: 80px;
       height: 80px;
-      background: url('https://raw.githubusercontent.com/seuUsuario/mrbean-game/main/images/cat.png') no-repeat center/contain;
+      background: url('https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/cat.png') no-repeat center/contain;
       display: none;
       z-index: 3;
     }
@@ -130,7 +130,9 @@
       border-radius: 6px;
       font-size: 18px;
     }
-    </style>
+  </style>
+</head>
+<body>
 
   <div id="menu">
     <h1>🎮 Mr. Bean Game</h1>
@@ -150,7 +152,7 @@
     <div id="mrbean"></div>
     <div id="cat-image"></div>
     <div id="gameover">
-      <img src="https://raw.githubusercontent.com/seuUsuario/mrbean-game/main/images/gameover1.jpg" alt="Mr Bean assustado com Mrs. Wicked" />
+      <img src="https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/gameover-low.png" alt="Mr Bean assustado com Mrs. Wicked" />
       <div id="finalscore"></div>
       <button onclick="restartGame()">Reiniciar</button>
       <button onclick="saveScoreAndShowRanking()">Ver Ranking</button>
@@ -268,104 +270,122 @@
           score++;
           updateLevel();
           updateScoreboard();
-
-          // Mostra o gato cat.png por 1s quando acerta
-          catImage.style.display = 'block';
-          setTimeout(() => (catImage.style.display = 'none'), 1000);
-
-          obj.element.remove();
+          game.removeChild(obj.element);
           objetos.splice(index, 1);
         } else if (obj.y > gameHeight) {
-          // Perde vida se deixar objeto cair
+          game.removeChild(obj.element);
+          objetos.splice(index, 1);
           lives--;
           updateScoreboard();
-
-          obj.element.remove();
-          objetos.splice(index, 1);
-
-          if (lives <= 0) {
-            endGame();
-          }
+          if (lives <= 0) endGame();
         }
       });
     }
 
-    function startGame() {
-      const nameInput = document.getElementById('playerName').value.trim();
-      const emailInput = document.getElementById('playerEmail').value.trim();
+    function endGame() {
+      isGameOver = true;
+      catImage.style.display = 'none';
 
-      if (nameInput === '' || emailInput === '') {
-        alert('Por favor, preencha nome e email!');
+      let imgSrc = '';
+      if (score < 10) {
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/gameover-low.png';
+      } else if (score >= 11 && score <= 20) {
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/gameover-mid1.png';
+      } else if (score >= 21 && score <= 30) {
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/gameover-mid2.png';
+      } else if (score > 30) {
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/mrbean-game/main/images/gameover-high.png';
+      }
+
+      const imgElement = gameoverScreen.querySelector('img');
+      imgElement.src = imgSrc;
+
+      gameoverScreen.style.display = 'block';
+      finalscore.textContent = `Game Over! Sua pontuação: ${score}`;
+    }
+
+    function restartGame() {
+      objetos.forEach(obj => game.removeChild(obj.element));
+      objetos = [];
+      score = 0;
+      lives = 3;
+      level = 1;
+      isGameOver = false;
+      mrbeanX = 160;
+      mrbean.style.left = mrbeanX + 'px';
+      catImage.style.left = mrbeanX + 'px';
+      catImage.style.display = 'none';
+      updateScoreboard();
+      gameoverScreen.style.display = 'none';
+
+      clearInterval(spawnInterval);
+      spawnInterval = setInterval(() => {
+        if (!isGameOver) createObjeto();
+      }, 1500);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (isGameOver) return;
+      if (e.key === 'ArrowLeft' || e.key === 'a') {
+        moveMrBean('left');
+      } else if (e.key === 'ArrowRight' || e.key === 'd') {
+        moveMrBean('right');
+      }
+    });
+
+    function startGame() {
+      const name = document.getElementById("playerName").value.trim();
+      const email = document.getElementById("playerEmail").value.trim();
+
+      if (!name || !email) {
+        alert("Por favor, preencha nome e email.");
         return;
       }
 
-      player.name = nameInput;
-      player.email = emailInput;
+      player.name = name;
+      player.email = email;
 
       menu.style.display = 'none';
       rankingDiv.style.display = 'none';
       game.style.display = 'block';
       scoreboard.style.display = 'block';
+
+      restartGame();
+    }
+
+    function backToMenu() {
+      game.style.display = 'none';
+      rankingDiv.style.display = 'none';
+      scoreboard.style.display = 'none';
       gameoverScreen.style.display = 'none';
-
-      resetGame();
-
-      spawnInterval = setInterval(() => {
-        if (!isGameOver) createObjeto();
-      }, 1500);
-
-      gameLoopInterval = setInterval(update, 40);
-    }
-
-    function resetGame() {
-      isGameOver = false;
-      score = 0;
-      lives = 3;
-      level = 1;
-      mrbeanX = 160;
-      mrbean.style.left = mrbeanX + 'px';
-      catImage.style.left = mrbeanX + 'px';
-      updateScoreboard();
-
-      objetos.forEach(obj => obj.element.remove());
-      objetos = [];
-    }
-
-    function endGame() {
-      isGameOver = true;
-      clearInterval(spawnInterval);
-      clearInterval(gameLoopInterval);
-
-      finalscore.textContent = `Sua pontuação final foi: ${score}`;
-
-      gameoverScreen.style.display = 'block';
-    }
-
-    function restartGame() {
-      resetGame();
-      gameoverScreen.style.display = 'none';
-
-      spawnInterval = setInterval(() => {
-        if (!isGameOver) createObjeto();
-      }, 1500);
-
-      gameLoopInterval = setInterval(update, 40);
+      menu.style.display = 'block';
     }
 
     function saveScoreAndShowRanking() {
-      // Salva no localStorage
-      let rankings = JSON.parse(localStorage.getItem('mrbeanRankings')) || [];
-      rankings.push({
+      saveScore();
+      showRanking();
+    }
+
+    function saveScore() {
+      if (!player.name) return;
+
+      let ranking = JSON.parse(localStorage.getItem('mrbeanRanking') || '[]');
+
+      ranking.push({
         name: player.name,
         email: player.email,
         score: score,
-        date: new Date().toISOString()
       });
-      rankings.sort((a, b) => b.score - a.score);
-      if (rankings.length > 10) rankings = rankings.slice(0, 10);
-      localStorage.setItem('mrbeanRankings', JSON.stringify(rankings));
 
-      showRanking();
+      // Ordena por score descendente
+      ranking.sort((a, b) => b.score - a.score);
+
+      // Mantém só os top 20
+      if (ranking.length > 20) {
+        ranking = ranking.slice(0, 20);
+      }
+
+      localStorage.setItem('mrbeanRanking', JSON.stringify(ranking));
     }
 
     function showRanking() {
@@ -376,38 +396,27 @@
 
       rankingDiv.style.display = 'block';
 
-      const rankings = JSON.parse(localStorage.getItem('mrbeanRankings')) || [];
+      let ranking = JSON.parse(localStorage.getItem('mrbeanRanking') || '[]');
 
       rankingList.innerHTML = '';
-      if(rankings.length === 0){
-        rankingList.innerHTML = '<li>Nenhum registro ainda</li>';
+
+      if (ranking.length === 0) {
+        rankingList.innerHTML = '<li>Nenhum jogador ainda.</li>';
       } else {
-        rankings.forEach((entry, idx) => {
-          rankingList.innerHTML += `<li>${idx + 1} - ${entry.name} - ${entry.score} pts</li>`;
+        ranking.forEach((entry, index) => {
+          rankingList.innerHTML += `<li>${index + 1}. ${entry.name} - ${entry.score} pts</li>`;
         });
       }
     }
 
-    function backToMenu() {
-      rankingDiv.style.display = 'none';
-      game.style.display = 'none';
-      scoreboard.style.display = 'none';
-      gameoverScreen.style.display = 'none';
-      menu.style.display = 'block';
-    }
+    // Loop principal do jogo
+    gameLoopInterval = setInterval(update, 50);
 
-    document.addEventListener('keydown', e => {
-      if (isGameOver) return;
-
-      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        moveMrBean('left');
-      }
-      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        moveMrBean('right');
-      }
-    });
+    // Inicialmente não criar objetos até o jogo começar
   </script>
-  </body>
+
+</body>
 </html>
+
 
 
