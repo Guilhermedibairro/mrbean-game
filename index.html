@@ -61,14 +61,14 @@
       width: 80px;
       height: 80px;
       left: 160px;
-      background: url('https://static.wikia.nocookie.net/mrbean/images/c/c2/Mr._Bean_Cartoon.webp/revision/latest/scale-to-width/360?cb=20250430000419') no-repeat center/contain;
+      background: url('https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/mrbean.webp') no-repeat center/contain;
       z-index: 2;
     }
     .objeto {
       position: absolute;
       width: 120px;
       height: 120px;
-      background: url('https://static.wikia.nocookie.net/mrbean/images/9/99/Scrapper.gif/revision/latest?cb=20241228064420') no-repeat center/contain;
+      background: url('https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/scrapper.gif') no-repeat center/contain;
       top: -120px;
       left: 0;
       z-index: 1;
@@ -79,7 +79,7 @@
       left: 160px;
       width: 80px;
       height: 80px;
-      background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwepJH990FRSX9v9UvQpOwuizunCI3As02AQ&s') no-repeat center/contain;
+      background: url('https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/cat.png') no-repeat center/contain;
       display: none;
       z-index: 3;
     }
@@ -130,8 +130,8 @@
       border-radius: 6px;
       font-size: 18px;
     }
-  </style>
-</head>
+    </style>
+  </body>
 <body>
 
   <div id="menu">
@@ -152,7 +152,7 @@
     <div id="mrbean"></div>
     <div id="cat-image"></div>
     <div id="gameover">
-      <img src="https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg" alt="Mr Bean assustado com Mrs. Wicked" />
+      <img src="https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/gameover1.jpg" alt="Mr Bean assustado com Mrs. Wicked" />
       <div id="finalscore"></div>
       <button onclick="restartGame()">Reiniciar</button>
       <button onclick="saveScoreAndShowRanking()">Ver Ranking</button>
@@ -289,13 +289,13 @@
       // Define a imagem do game over conforme pontuação
       let imgSrc = '';
       if (score < 10) {
-        imgSrc = 'https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg';
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/gameover1.jpg';
       } else if (score >= 11 && score <= 20) {
-        imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHf_0KFs9sb3e2Jg8mO5i1y_7WL7cHVwjaNw&s';
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/gameover2.jpg';
       } else if (score >= 21 && score <= 30) {
-        imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgMxnlwlrSBW2EAEtnmFC-mXCHgrdPXtGZOw&s';
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/gameover3.jpg';
       } else if (score > 30) {
-        imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTld38MlyngO1MOuf6rVYTP0U_sZhmfxYcCRQ&s';
+        imgSrc = 'https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/images/gameover4.jpg';
       }
 
       const imgElement = gameoverScreen.querySelector('img');
@@ -352,79 +352,5 @@
       scoreboard.style.display = 'block';
 
       restartGame();
-    }
 
-    function backToMenu() {
-      game.style.display = 'none';
-      rankingDiv.style.display = 'none';
-      scoreboard.style.display = 'none';
-      gameoverScreen.style.display = 'none';
-      menu.style.display = 'block';
-    }
-
-    function saveScoreAndShowRanking() {
-      saveScore();
-      showRanking();
-    }
-
-    function saveScore() {
-      if (!player.name) return; // não salvar se não tiver jogador
-
-      let ranking = JSON.parse(localStorage.getItem('mrbeanRanking') || '[]');
-
-      ranking.push({
-        name: player.name,
-        email: player.email,
-        score: score,
-        date: new Date().toISOString()
-      });
-
-      // Ordenar do maior para o menor score
-      ranking.sort((a, b) => b.score - a.score);
-
-      // Manter só os 10 melhores
-      ranking = ranking.slice(0, 10);
-
-      localStorage.setItem('mrbeanRanking', JSON.stringify(ranking));
-    }
-
-    function showRanking() {
-      menu.style.display = 'none';
-      game.style.display = 'none';
-      scoreboard.style.display = 'none';
-      gameoverScreen.style.display = 'none';
-
-      rankingDiv.style.display = 'block';
-
-      const ranking = JSON.parse(localStorage.getItem('mrbeanRanking') || '[]');
-
-      rankingList.innerHTML = '';
-
-      if (ranking.length === 0) {
-        rankingList.innerHTML = '<li>Nenhum resultado ainda.</li>';
-        return;
-      }
-
-      ranking.forEach((item, index) => {
-        rankingList.innerHTML += `<li><strong>${index + 1}. ${item.name}</strong> — ${item.score} pontos</li>`;
-      });
-    }
-
-    // Ocultar o jogo inicialmente e mostrar só o menu
-    game.style.display = 'none';
-    rankingDiv.style.display = 'none';
-    scoreboard.style.display = 'none';
-
-    spawnInterval = setInterval(() => {
-      if (!isGameOver) createObjeto();
-    }, 1500);
-
-    gameLoopInterval = setInterval(() => {
-      update();
-    }, 1000 / 60);
-
-    updateScoreboard();
-  </script>
-  </body>
-</html>
 
