@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Mr. Bean Game - Ranking Online</title>
+  <title>Mr. Bean Game</title>
   <style>
     body {
       margin: 0;
@@ -62,7 +62,7 @@
     }
     .objeto {
       position: absolute;
-      width: 60px; /* menor que antes */
+      width: 60px; /* menor tamanho */
       height: 60px;
       background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
       top: -60px;
@@ -79,6 +79,7 @@
       display: none;
       z-index: 3;
     }
+    
     #gameover {
       position: absolute;
       top: 50%;
@@ -134,11 +135,11 @@
     <input type="text" id="playerName" placeholder="Seu nome" />
     <input type="email" id="playerEmail" placeholder="Seu email" />
     <button onclick="startGame()">Jogar</button>
-    <button onclick="showRanking()">Ver Ranking Online</button>
+    <button onclick="showRanking()">Ver Ranking</button>
   </div>
 
   <div id="ranking" style="display:none;">
-    <h2>🏆 Ranking Global</h2>
+    <h2>🏆 Ranking</h2>
     <ul id="rankingList"></ul>
     <button onclick="backToMenu()">Voltar</button>
   </div>
@@ -157,25 +158,7 @@
 
   <div id="scoreboard" style="display:none;">Pontuação: 0 | Vidas: 3 | Nível: 1</div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
   <script>
-    // *** COLOQUE AQUI SEU firebaseConfig DO SEU PROJETO FIREBASE ***
-    const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SEU_AUTH_DOMAIN",
-      projectId: "SEU_PROJECT_ID",
-      storageBucket: "SEU_STORAGE_BUCKET",
-      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-      appId: "SEU_APP_ID"
-    };
-
-    // Inicializa Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     const menu = document.getElementById('menu');
     const rankingDiv = document.getElementById('ranking');
     const game = document.getElementById('game');
@@ -211,7 +194,7 @@
     function createObjeto() {
       const objeto = document.createElement('div');
       objeto.classList.add('objeto');
-      objeto.style.left = Math.floor(Math.random() * (gameWidth - 60)) + 'px';
+      objeto.style.left = Math.floor(Math.random() * (gameWidth - 60)) + 'px'; // largura objeto menor
       objeto.style.top = '-60px';
       game.appendChild(objeto);
 
@@ -240,7 +223,7 @@
     function checkCollision(obj) {
       const objX = obj.x;
       const objY = obj.y;
-      const objWidth = 60;
+      const objWidth = 60; // tamanho atualizado
       const objHeight = 60;
 
       if (
@@ -298,8 +281,8 @@
     function endGame() {
       isGameOver = true;
       catImage.style.display = 'none';
+      mrbean.style.display = 'none';  // Esconder Mr. Bean no game over
 
-      // Define a imagem do game over conforme pontuação
       let imgSrc = '';
       if (score < 10) {
         imgSrc = 'https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg';
@@ -328,9 +311,12 @@
       mrbeanX = 160;
       mrbean.style.left = mrbeanX + 'px';
       catImage.style.left = mrbeanX + 'px';
-      catImage.style.display = 'none';
-      updateScoreboard();
       gameoverScreen.style.display = 'none';
+      scoreboard.style.display = 'block';
+      catImage.style.display = 'block';
+      mrbean.style.display = 'block';  // Mostrar Mr. Bean no restart
+
+      updateScoreboard();
 
       clearInterval(spawnInterval);
       spawnInterval = setInterval(() => {
@@ -338,18 +324,16 @@
       }, 1500);
 
       clearInterval(gameLoopInterval);
-      gameLoopInterval = setInterval(update, 30);
+      gameLoopInterval = setInterval(update, 20);
     }
 
     function startGame() {
       const nameInput = document.getElementById('playerName');
       const emailInput = document.getElementById('playerEmail');
-
-      if (nameInput.value.trim() === '' || emailInput.value.trim() === '') {
-        alert('Por favor, insira seu nome e email para jogar.');
+      if (!nameInput.value.trim() || !emailInput.value.trim()) {
+        alert('Por favor, insira nome e email.');
         return;
       }
-
       player.name = nameInput.value.trim();
       player.email = emailInput.value.trim();
 
@@ -357,60 +341,9 @@
       rankingDiv.style.display = 'none';
       game.style.display = 'block';
       scoreboard.style.display = 'block';
+      catImage.style.display = 'block';
 
       restartGame();
-    }
-
-    // Salvar o score no Firestore
-    async function saveScore() {
-      if (!player.name || !player.email) return;
-
-      try {
-        await db.collection('rankings').add({
-          name: player.name,
-          email: player.email,
-          score: score,
-          date: new Date()
-        });
-        // console.log('Score salvo!');
-      } catch (error) {
-        console.error('Erro ao salvar score:', error);
-      }
-    }
-
-    // Mostrar ranking online
-    async function showRanking() {
-      menu.style.display = 'none';
-      game.style.display = 'none';
-      scoreboard.style.display = 'none';
-      gameoverScreen.style.display = 'none';
-      rankingDiv.style.display = 'block';
-
-      rankingList.innerHTML = '<li>Carregando...</li>';
-
-      try {
-        const querySnapshot = await db.collection('rankings')
-          .orderBy('score', 'desc')
-          .limit(20)
-          .get();
-
-        rankingList.innerHTML = '';
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const li = document.createElement('li');
-          li.textContent = `${data.name} - ${data.score} pts`;
-          rankingList.appendChild(li);
-        });
-
-        if (rankingList.children.length === 0) {
-          rankingList.innerHTML = '<li>Nenhum dado disponível.</li>';
-        }
-
-      } catch (error) {
-        rankingList.innerHTML = '<li>Erro ao carregar ranking.</li>';
-        console.error('Erro ao buscar ranking:', error);
-      }
     }
 
     function backToMenu() {
@@ -421,26 +354,84 @@
       menu.style.display = 'block';
     }
 
-    async function saveScoreAndShowRanking() {
-      await saveScore();
+    // Usaremos localStorage para salvar e recuperar ranking
+    function saveScore() {
+      let ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+      ranking.push({
+        name: player.name,
+        email: player.email,
+        score: score,
+        date: new Date().toISOString()
+      });
+      // Ordenar ranking decrescente por score
+      ranking.sort((a,b) => b.score - a.score);
+      // Manter só os top 50
+      ranking = ranking.slice(0, 50);
+      localStorage.setItem('ranking', JSON.stringify(ranking));
+    }
+
+    function showRanking() {
+      menu.style.display = 'none';
+      game.style.display = 'none';
+      scoreboard.style.display = 'none';
+      gameoverScreen.style.display = 'none';
+      rankingDiv.style.display = 'block';
+
+      let ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+      rankingList.innerHTML = '';
+      if (ranking.length === 0) {
+        rankingList.innerHTML = '<li>Nenhum registro ainda.</li>';
+      } else {
+        ranking.forEach((item, idx) => {
+          rankingList.innerHTML += `<li>${idx + 1}. ${item.name} - ${item.score} pts</li>`;
+        });
+      }
+    }
+
+    function saveScoreAndShowRanking() {
+      saveScore();
       showRanking();
     }
 
-    // Controles simples de teclado para movimentar Mr. Bean
-    document.addEventListener('keydown', (e) => {
-      if (!game.style.display || game.style.display === 'none') return;
-      if (isGameOver) return;
+    // Controles teclado e touch para melhor mobilidade
+    let keysPressed = {};
+    document.addEventListener('keydown', e => {
+      keysPressed[e.key] = true;
+    });
+    document.addEventListener('keyup', e => {
+      keysPressed[e.key] = false;
+    });
 
-      if (e.key === 'ArrowLeft' || e.key === 'a') {
+    function gameLoop() {
+      if (keysPressed['ArrowLeft'] || keysPressed['a']) {
         moveMrBean('left');
-      } else if (e.key === 'ArrowRight' || e.key === 'd') {
+      }
+      if (keysPressed['ArrowRight'] || keysPressed['d']) {
         moveMrBean('right');
       }
-    });
+      update();
+      if (!isGameOver) {
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    // Iniciar loop ao começar jogo
+    function startGameLoop() {
+      if (!isGameOver) {
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    // Atualizamos restartGame para chamar startGameLoop
+    const originalRestartGame = restartGame;
+    restartGame = function() {
+      originalRestartGame();
+      startGameLoop();
+    };
+
   </script>
 </body>
 </html>
-
 
 
 
