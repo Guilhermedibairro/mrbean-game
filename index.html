@@ -1,412 +1,530 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Mr. Bean Game</title>
-    <style>
-      body {
-        margin: 0;
-        background: #d0e7f9;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        user-select: none;
-      }
-      #menu, #ranking, #game {
-        width: 400px;
-        margin: 20px auto;
-        background: #88b3e0;
-        border: 3px solid #444;
-        border-radius: 10px;
-        padding: 20px;
-        box-sizing: border-box;
-        color: #333;
-        text-align: center;
-      }
-      #menu input {
-        display: block;
-        width: 90%;
-        margin: 10px auto;
-        padding: 10px;
-        font-size: 18px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-      }
-      #menu button, #ranking button, #gameover button {
-        margin-top: 15px;
-        padding: 8px 16px;
-        font-size: 18px;
-        cursor: pointer;
-        border-radius: 6px;
-        border: none;
-        background: #4caf50;
-        color: white;
-        transition: background 0.3s ease;
-      }
-      #menu button:hover, #ranking button:hover, #gameover button:hover {
-        background: #388e3c;
-      }
-      #game {
-        position: relative;
-        height: 600px;
-        overflow: hidden;
-        padding: 0;
-      }
-      #mrbean {
-        position: absolute;
-        bottom: 10px;
-        width: 80px;
-        height: 80px;
-        left: 160px;
-        background: url('https://c1.klipartz.com/pngpicture/463/833/sticker-png-mr-bean-cartoon-television-television-show-drawing-animation-humour-cartoon-network-thumbnail.png') no-repeat center/contain;
-        z-index: 2;
-      }
-      .objeto {
-        position: absolute;
-        width: 60px; /* reduzido de 120px */
-        height: 60px; /* reduzido de 120px */
-        background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
-        top: -60px; /* ajustado para nova altura */
-        left: 0;
-        z-index: 1;
-      }
-      #cat-image {
-        position: absolute;
-        bottom: 10px;
-        left: 160px;
-        width: 60px; /* reduzido */
-        height: 60px; /* reduzido */
-        background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
-        display: none;
-        z-index: 3;
-      }
-      #gameover {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(255,255,255,0.95);
-        padding: 30px;
-        border-radius: 10px;
-        font-size: 24px;
-        display: none;
-        border: 2px solid #444;
-        width: 80%;
-        text-align: center;
-        z-index: 5;
-        user-select: none;
-      }
-      #gameover img {
-        width: 200px;
-        margin-bottom: 15px;
-        border-radius: 10px;
-        box-shadow: 0 0 12px rgba(0,0,0,0.3);
-      }
-      #scoreboard {
-        text-align: center;
-        margin: 10px auto;
-        font-size: 20px;
-        color: #333;
-        user-select: none;
-        max-width: 400px;
-      }
-      #ranking ul {
-        list-style: none;
-        padding: 0;
-        max-height: 300px;
-        overflow-y: auto;
-        margin: 10px 0;
-        color: #000;
-        text-align: left;
-      }
-      #ranking li {
-        background: #b2d1f2;
-        margin: 5px 0;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 18px;
-      }
-    </style>
-  </head>
-  <body>
+<head>
+<meta charset="UTF-8" />
+<title>Mr. Bean Game com Ranking Privado</title>
+<style>
+  /* (mesmo CSS do antes) */
+  body {
+    margin: 0;
+    background: #d0e7f9;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    user-select: none;
+  }
+  #menu, #ranking, #privateRanking, #game {
+    width: 400px;
+    margin: 20px auto;
+    background: #88b3e0;
+    border: 3px solid #444;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    color: #333;
+    text-align: center;
+  }
+  #menu input, #privateRanking input {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    background: #4caf50;
+    color: white;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #388e3c;
+  }
+  #game {
+    position: relative;
+    height: 600px;
+    overflow: hidden;
+    padding: 0;
+  }
+  #mrbean {
+    position: absolute;
+    bottom: 10px;
+    width: 80px;
+    height: 80px;
+    left: 160px;
+    background: url('https://c1.klipartz.com/pngpicture/463/833/sticker-png-mr-bean-cartoon-television-television-show-drawing-animation-humour-cartoon-network-thumbnail.png') no-repeat center/contain;
+    z-index: 2;
+  }
+  .objeto {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
+    top: -60px;
+    left: 0;
+    z-index: 1;
+  }
+  #cat-image {
+    position: absolute;
+    bottom: 10px;
+    left: 160px;
+    width: 60px;
+    height: 60px;
+    background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rbm5sTL-PJahmpAhpEyvZ5yZek8z-FvRZhcrfb0iTpC70J_002Deviuq2T-Jgd4fqWQ&usqp=CAU') no-repeat center/contain;
+    display: none;
+    z-index: 3;
+  }
+  #gameover {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.95);
+    padding: 30px;
+    border-radius: 10px;
+    font-size: 24px;
+    display: none;
+    border: 2px solid #444;
+    width: 80%;
+    text-align: center;
+    z-index: 5;
+    user-select: none;
+  }
+  #gameover img {
+    width: 200px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  }
+  #scoreboard {
+    text-align: center;
+    margin: 10px auto;
+    font-size: 20px;
+    color: #333;
+    user-select: none;
+    max-width: 400px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 10px 0;
+    color: #000;
+    text-align: left;
+  }
+  li {
+    background: #b2d1f2;
+    margin: 5px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
 
-    <div id="menu">
-      <h1>🎮 Mr. Bean Game</h1>
-      <input type="text" id="playerName" placeholder="Seu nome" />
-      <input type="email" id="playerEmail" placeholder="Seu email" />
-      <button onclick="startGame()">Jogar</button>
-      <button onclick="showRanking()">Ver Ranking</button>
-    </div>
+<div id="menu">
+  <h1>🎮 Mr. Bean Game</h1>
+  <input type="text" id="playerName" placeholder="Seu nome" />
+  <input type="email" id="playerEmail" placeholder="Seu email" />
+  <button onclick="startGame()">Jogar</button>
+  <button onclick="showRanking()">Ver Ranking Público</button>
+  <button onclick="showPrivateRankingLogin()">Ranking Privado (Admin)</button>
+</div>
 
-    <div id="ranking" style="display:none;">
-      <h2>🏆 Ranking</h2>
-      <ul id="rankingList"></ul>
-      <button onclick="backToMenu()">Voltar</button>
-    </div>
+<div id="ranking" style="display:none;">
+  <h2>🏆 Ranking Público</h2>
+  <ul id="rankingList"></ul>
+  <button onclick="backToMenu()">Voltar</button>
+</div>
 
-    <div id="game" style="display:none;">
-      <div id="mrbean"></div>
-      <div id="cat-image"></div>
-      <div id="gameover">
-        <img src="https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg" alt="Mr Bean assustado com Mrs. Wicked" />
-        <div id="finalscore"></div>
-        <button onclick="restartGame()">Reiniciar</button>
-        <button onclick="saveScoreAndShowRanking()">Ver Ranking</button>
-        <button onclick="backToMenu()">Menu</button>
-      </div>
-    </div>
+<div id="privateRankingLogin" style="display:none;">
+  <h2>🔒 Login Ranking Privado</h2>
+  <input type="password" id="adminPassword" placeholder="Senha do Admin" />
+  <button onclick="checkAdminPassword()">Entrar</button>
+  <button onclick="backToMenu()">Voltar</button>
+</div>
 
-    <div id="scoreboard" style="display:none;">Pontuação: 0 | Vidas: 3 | Nível: 1</div>
+<div id="privateRanking" style="display:none;">
+  <h2>🔐 Ranking Privado (Admin)</h2>
+  <ul id="privateRankingList"></ul>
+  <button onclick="backToMenu()">Voltar</button>
+</div>
 
-    <script>
-      const menu = document.getElementById('menu');
-      const rankingDiv = document.getElementById('ranking');
-      const game = document.getElementById('game');
-      const mrbean = document.getElementById('mrbean');
-      const catImage = document.getElementById('cat-image');
-      const scoreboard = document.getElementById('scoreboard');
-      const gameoverScreen = document.getElementById('gameover');
-      const finalscore = document.getElementById('finalscore');
-      const rankingList = document.getElementById('rankingList');
+<div id="game" style="display:none;">
+  <div id="mrbean"></div>
+  <div id="cat-image"></div>
+  <div id="gameover">
+    <img src="https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg" alt="Mr Bean assustado com Mrs. Wicked" />
+    <div id="finalscore"></div>
+    <button onclick="restartGame()">Reiniciar</button>
+    <button onclick="saveScoreAndShowRanking()">Ver Ranking</button>
+    <button onclick="backToMenu()">Menu</button>
+  </div>
+</div>
 
-      const gameWidth = 400;
-      const gameHeight = 600;
-      const mrbeanWidth = 80;
-      const mrbeanHeight = 80;
-      const objetoWidth = 60;
-      const objetoHeight = 60;
+<div id="scoreboard" style="display:none;">Pontuação: 0 | Vidas: 3 | Nível: 1</div>
 
-      let mrbeanX = 160;
-      const mrbeanY = gameHeight - mrbeanHeight - 10;
-      let speed = 14;
-      let objetos = [];
-      let spawnInterval;
-      let gameLoopInterval;
+<script>
+  const menu = document.getElementById('menu');
+  const rankingDiv = document.getElementById('ranking');
+  const privateRankingDiv = document.getElementById('privateRanking');
+  const privateRankingLoginDiv = document.getElementById('privateRankingLogin');
+  const game = document.getElementById('game');
+  const mrbean = document.getElementById('mrbean');
+  const catImage = document.getElementById('cat-image');
+  const scoreboard = document.getElementById('scoreboard');
+  const gameoverScreen = document.getElementById('gameover');
+  const finalscore = document.getElementById('finalscore');
+  const rankingList = document.getElementById('rankingList');
+  const privateRankingList = document.getElementById('privateRankingList');
 
-      let score = 0;
-      let lives = 3;
-      let level = 1;
-      let isGameOver = false;
+  const gameWidth = 400;
+  const gameHeight = 600;
+  const mrbeanWidth = 80;
+  const mrbeanHeight = 80;
+  const objetoWidth = 60;
+  const objetoHeight = 60;
 
-      let player = {
-        name: '',
-        email: ''
-      };
+  let mrbeanX = 160;
+  const mrbeanY = gameHeight - mrbeanHeight - 10;
+  let speed = 14;
+  let objetos = [];
+  let spawnInterval;
+  let gameLoopInterval;
 
-      function createObjeto() {
-        const objeto = document.createElement('div');
-        objeto.classList.add('objeto');
-        objeto.style.left = Math.floor(Math.random() * (gameWidth - objetoWidth)) + 'px';
-        objeto.style.top = -objetoHeight + 'px';
-        game.appendChild(objeto);
+  let score = 0;
+  let lives = 3;
+  let level = 1;
+  let isGameOver = false;
 
-        const fallSpeed = 3 + Math.random() * 2 + (level - 1) * 1.5;
+  let player = {
+    name: '',
+    email: ''
+  };
 
-        objetos.push({
-          element: objeto,
-          y: -objetoHeight,
-          x: parseInt(objeto.style.left),
-          speed: fallSpeed,
-        });
-      }
+  function createObjeto() {
+    const objeto = document.createElement('div');
+    objeto.classList.add('objeto');
+    objeto.style.left = Math.floor(Math.random() * (gameWidth - objetoWidth)) + 'px';
+    objeto.style.top = -objetoHeight + 'px';
+    game.appendChild(objeto);
 
-      function moveMrBean(direction) {
-        if (direction === 'left') {
-          mrbeanX -= speed;
-          if (mrbeanX < 0) mrbeanX = 0;
-        } else if (direction === 'right') {
-          mrbeanX += speed;
-          if (mrbeanX > gameWidth - mrbeanWidth) mrbeanX = gameWidth - mrbeanWidth;
-        }
-        mrbean.style.left = mrbeanX + 'px';
-        catImage.style.left = mrbeanX + 'px';
-      }
+    const fallSpeed = 3 + Math.random() * 2 + (level - 1) * 1.5;
 
-      function checkCollision(obj) {
-        const objX = obj.x;
-        const objY = obj.y;
+    objetos.push({
+      element: objeto,
+      y: -objetoHeight,
+      x: parseInt(objeto.style.left),
+      speed: fallSpeed,
+    });
+  }
 
-        if (
-          objX < mrbeanX + mrbeanWidth &&
-          objX + objetoWidth > mrbeanX &&
-          objY + objetoHeight > mrbeanY &&
-          objY < mrbeanY + mrbeanHeight
-        ) {
-          return true;
-        }
-        return false;
-      }
+  function moveMrBean(direction) {
+    if (direction === 'left') {
+      mrbeanX -= speed;
+      if (mrbeanX < 0) mrbeanX = 0;
+    } else if (direction === 'right') {
+      mrbeanX += speed;
+      if (mrbeanX > gameWidth - mrbeanWidth) mrbeanX = gameWidth - mrbeanWidth;
+    }
+    mrbean.style.left = mrbeanX + 'px';
+    catImage.style.left = mrbeanX + 'px';
+  }
 
-      function updateLevel() {
-        const newLevel = Math.floor(score / 10) + 1;
-        if (newLevel !== level) {
-          level = newLevel;
-          updateScoreboard();
+  function checkCollision(obj) {
+    const objX = obj.x;
+    const objY = obj.y;
 
-          clearInterval(spawnInterval);
-          const newSpawnTime = Math.max(700, 1500 - (level - 1) * 200);
-          spawnInterval = setInterval(() => {
-            if (!isGameOver) createObjeto();
-          }, newSpawnTime);
-        }
-      }
+    if (
+      objX < mrbeanX + mrbeanWidth &&
+      objX + objetoWidth > mrbeanX &&
+      objY + objetoHeight > mrbeanY &&
+      objY < mrbeanY + mrbeanHeight
+    ) {
+      return true;
+    }
+    return false;
+  }
 
-      function updateScoreboard() {
-        scoreboard.textContent = `Pontuação: ${score} | Vidas: ${lives} | Nível: ${level}`;
-      }
+  function updateLevel() {
+    const newLevel = Math.floor(score / 10) + 1;
+    if (newLevel !== level) {
+      level = newLevel;
+      updateScoreboard();
 
-      function update() {
-        if (isGameOver) return;
-
-        objetos.forEach((obj, index) => {
-          obj.y += obj.speed;
-          obj.element.style.top = obj.y + 'px';
-
-          if (checkCollision(obj)) {
-            score++;
-            updateLevel();
-            updateScoreboard();
-            game.removeChild(obj.element);
-            objetos.splice(index, 1);
-          } else if (obj.y > gameHeight) {
-            game.removeChild(obj.element);
-            objetos.splice(index, 1);
-            lives--;
-            updateScoreboard();
-            if (lives <= 0) endGame();
-          }
-        });
-      }
-
-      function endGame() {
-        isGameOver = true;
-        catImage.style.display = 'none';
-
-        // Define a imagem do game over conforme pontuação
-        let imgSrc = '';
-        if (score < 10) {
-          imgSrc = 'https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg';
-        } else if (score >= 11 && score <= 20) {
-          imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHf_0KFs9sb3e2Jg8mO5i1y_7WL7cHVwjaNw&s';
-        } else if (score >= 21 && score <= 30) {
-          imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgMxnlwlrSBW2EAEtnmFC-mXCHgrdPXtGZOw&s';
-        } else if (score > 30) {
-          imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTld38MlyngO1MOuf6rVYTP0U_sZhmfxYcCRQ&s';
-        }
-
-        const imgElement = gameoverScreen.querySelector('img');
-        imgElement.src = imgSrc;
-
-        gameoverScreen.style.display = 'block';
-        finalscore.textContent = `Game Over! Sua pontuação: ${score}`;
-      }
-
-      function restartGame() {
-        objetos.forEach(obj => game.removeChild(obj.element));
-        objetos = [];
-        score = 0;
-        lives = 3;
-        level = 1;
-        isGameOver = false;
-        mrbeanX = 160;
-        mrbean.style.left = mrbeanX + 'px';
-        catImage.style.left = mrbeanX + 'px';
-        catImage.style.display = 'none';
-        updateScoreboard();
-        gameoverScreen.style.display = 'none';
-
-        clearInterval(spawnInterval);
-        spawnInterval = setInterval(() => {
-          if (!isGameOver) createObjeto();
-        }, 1500);
-      }
-
-      document.addEventListener('keydown', e => {
-        if (isGameOver) return;
-        if (e.key === 'ArrowLeft' || e.key === 'a') {
-          moveMrBean('left');
-        } else if (e.key === 'ArrowRight' || e.key === 'd') {
-          moveMrBean('right');
-        }
-      });
-
-      function startGame() {
-        const name = document.getElementById("playerName").value.trim();
-        const email = document.getElementById("playerEmail").value.trim();
-
-        if (!name || !email) {
-          alert("Por favor, preencha nome e email.");
-          return;
-        }
-
-        player.name = name;
-        player.email = email;
-
-        menu.style.display = 'none';
-        rankingDiv.style.display = 'none';
-        game.style.display = 'block';
-        scoreboard.style.display = 'block';
-
-        restartGame();
-      }
-
-      function backToMenu() {
-        game.style.display = 'none';
-        rankingDiv.style.display = 'none';
-        menu.style.display = 'block';
-        scoreboard.style.display = 'none';
-        gameoverScreen.style.display = 'none';
-      }
-
-      // Ranking simples no localStorage
-      function saveScoreAndShowRanking() {
-        const storedRanking = JSON.parse(localStorage.getItem('ranking')) || [];
-        storedRanking.push({
-          name: player.name,
-          email: player.email,
-          score: score,
-          date: new Date().toLocaleString()
-        });
-
-        storedRanking.sort((a, b) => b.score - a.score);
-
-        // Limita top 10
-        localStorage.setItem('ranking', JSON.stringify(storedRanking.slice(0, 10)));
-
-        showRanking();
-      }
-
-      function showRanking() {
-        menu.style.display = 'none';
-        game.style.display = 'none';
-        gameoverScreen.style.display = 'none';
-        rankingDiv.style.display = 'block';
-
-        const storedRanking = JSON.parse(localStorage.getItem('ranking')) || [];
-        rankingList.innerHTML = '';
-
-        if (storedRanking.length === 0) {
-          rankingList.innerHTML = '<li>Nenhum score registrado ainda.</li>';
-          return;
-        }
-
-        storedRanking.forEach(item => {
-          const li = document.createElement('li');
-          li.textContent = `${item.name} (${item.email}) - ${item.score} pontos em ${item.date}`;
-          rankingList.appendChild(li);
-        });
-      }
-
-      // Iniciar loop do jogo
-      gameLoopInterval = setInterval(() => {
-        update();
-      }, 50);
-
-      // Começa a gerar objetos
+      clearInterval(spawnInterval);
+      const newSpawnTime = Math.max(700, 1500 - (level - 1) * 200);
       spawnInterval = setInterval(() => {
         if (!isGameOver) createObjeto();
-      }, 1500);
-    </script>
-  </body>
+      }, newSpawnTime);
+    }
+  }
+
+  function updateScoreboard() {
+    scoreboard.textContent = `Pontuação: ${score} | Vidas: ${lives} | Nível: ${level}`;
+  }
+
+  function update() {
+    if (isGameOver) return;
+
+    objetos.forEach((obj, index) => {
+      obj.y += obj.speed;
+      obj.element.style.top = obj.y + 'px';
+
+      if (checkCollision(obj)) {
+        score++;
+        updateLevel();
+        updateScoreboard();
+        game.removeChild(obj.element);
+        objetos.splice(index, 1);
+      } else if (obj.y > gameHeight) {
+        game.removeChild(obj.element);
+        objetos.splice(index, 1);
+        lives--;
+        updateScoreboard();
+        if (lives <= 0) endGame();
+      }
+    });
+  }
+
+  function endGame() {
+    isGameOver = true;
+    catImage.style.display = 'none';
+
+    // Define a imagem do game over conforme pontuação
+    let imgSrc = '';
+    if (score < 10) {
+      imgSrc = 'https://i.pinimg.com/236x/65/bc/95/65bc95e680feb2a428483191e2be2fb8.jpg';
+    } else if (score >= 11 && score <= 20) {
+      imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHf_0KFs9sb3e2Jg8mO5i1y_7WL7cHVwjaNw&s';
+    } else if (score >= 21 && score <= 30) {
+      imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgMxnlwlrSBW2EAEtnmFC-mXCHgrdPXtGZOw&s';
+    } else if (score > 30) {
+      imgSrc = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTld38MlyngO1MOuf6rVYTP0U_sZhmfxYcCRQ&s';
+    }
+
+    const imgElement = gameoverScreen.querySelector('img');
+    imgElement.src = imgSrc;
+
+    gameoverScreen.style.display = 'block';
+    finalscore.textContent = `Game Over! Sua pontuação: ${score}`;
+  }
+
+  function restartGame() {
+    objetos.forEach(obj => game.removeChild(obj.element));
+    objetos = [];
+    score = 0;
+    lives = 3;
+    level = 1;
+    isGameOver = false;
+    mrbeanX = 160;
+    mrbean.style.left = mrbeanX + 'px';
+    catImage.style.left = mrbeanX + 'px';
+    catImage.style.display = 'none';
+    updateScoreboard();
+    gameoverScreen.style.display = 'none';
+
+    clearInterval(spawnInterval);
+    spawnInterval = setInterval(() => {
+      if (!isGameOver) createObjeto();
+    }, 1500);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (isGameOver) return;
+    if (e.key === 'ArrowLeft' || e.key === 'a') {
+      moveMrBean('left');
+    } else if (e.key === 'ArrowRight' || e.key === 'd') {
+      moveMrBean('right');
+    }
+  });
+
+  function startGame() {
+    const name = document.getElementById("playerName").value.trim();
+    const email = document.getElementById("playerEmail").value.trim();
+
+    if (!name || !email) {
+      alert("Por favor, preencha nome e email.");
+      return;
+    }
+
+    player.name = name;
+    player.email = email;
+
+    menu.style.display = 'none';
+    rankingDiv.style.display = 'none';
+    privateRankingDiv.style.display = 'none';
+    privateRankingLoginDiv.style.display = 'none';
+
+    game.style.display = 'block';
+    scoreboard.style.display = 'block';
+
+    restartGame();
+  }
+
+  // Salvar pontuação no localStorage
+  function saveScore() {
+    const now = new Date();
+    const dateString = now.toLocaleString();
+
+    const scoreData = {
+      name: player.name,
+      email: player.email,
+      score: score,
+      date: dateString,
+    };
+
+    let storedRanking = JSON.parse(localStorage.getItem('mrbeanRanking')) || [];
+    storedRanking.push(scoreData);
+    localStorage.setItem('mrbeanRanking', JSON.stringify(storedRanking));
+  }
+
+  // Mostrar ranking público
+  function showRanking() {
+    menu.style.display = 'none';
+    game.style.display = 'none';
+    privateRankingDiv.style.display = 'none';
+    privateRankingLoginDiv.style.display = 'none';
+
+    rankingList.innerHTML = '';
+    let storedRanking = JSON.parse(localStorage.getItem('mrbeanRanking')) || [];
+
+    if (storedRanking.length === 0) {
+      rankingList.innerHTML = '<li>Nenhum score registrado ainda.</li>';
+    } else {
+      // Mostrar só os 10 melhores scores públicos ordenados por score decrescente
+      storedRanking.sort((a, b) => b.score - a.score);
+      let top10 = storedRanking.slice(0, 10);
+      top10.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} (${item.email}) - ${item.score} pontos em ${item.date}`;
+        rankingList.appendChild(li);
+      });
+    }
+
+    rankingDiv.style.display = 'block';
+  }
+
+  // Mostrar tela de login para ranking privado
+  function showPrivateRankingLogin() {
+    menu.style.display = 'none';
+    rankingDiv.style.display = 'none';
+    game.style.display = 'none';
+    privateRankingDiv.style.display = 'none';
+
+    privateRankingLoginDiv.style.display = 'block';
+  }
+
+  // Verifica senha e mostra ranking privado
+  function checkAdminPassword() {
+    const password = document.getElementById('adminPassword').value;
+    const adminPassword = 'admin123'; // senha simples no código, pode mudar
+
+    if (password === adminPassword) {
+      showPrivateRanking();
+    } else {
+      alert('Senha incorreta!');
+    }
+  }
+
+  // Mostrar ranking privado (todos os scores)
+  function showPrivateRanking() {
+    privateRankingLoginDiv.style.display = 'none';
+    rankingDiv.style.display = 'none';
+    menu.style.display = 'none';
+    game.style.display = 'none';
+
+    privateRankingList.innerHTML = '';
+    let storedRanking = JSON.parse(localStorage.getItem('mrbeanRanking')) || [];
+
+    if (storedRanking.length === 0) {
+      privateRankingList.innerHTML = '<li>Nenhum score registrado ainda.</li>';
+    } else {
+      // Ordena por score decrescente
+      storedRanking.sort((a, b) => b.score - a.score);
+      storedRanking.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} (${item.email}) - ${item.score} pontos em ${item.date}`;
+        privateRankingList.appendChild(li);
+      });
+    }
+
+    privateRankingDiv.style.display = 'block';
+  }
+
+  function backToMenu() {
+    menu.style.display = 'block';
+    rankingDiv.style.display = 'none';
+    privateRankingDiv.style.display = 'none';
+    privateRankingLoginDiv.style.display = 'none';
+    game.style.display = 'none';
+    scoreboard.style.display = 'none';
+    gameoverScreen.style.display = 'none';
+  }
+
+  function saveScoreAndShowRanking() {
+    saveScore();
+    endGame();
+    showRanking();
+  }
+
+  // Loop do jogo
+  function gameLoop() {
+    update();
+    if (!isGameOver) requestAnimationFrame(gameLoop);
+  }
+
+  let spawnTimer;
+  function spawnObjects() {
+    if (!isGameOver) createObjeto();
+    spawnTimer = setTimeout(spawnObjects, Math.max(700, 1500 - (level - 1) * 200));
+  }
+
+  // Iniciar jogo e spawn
+  // Vamos usar setInterval para simplificar spawn e game loop
+  let spawnIntervalTimer;
+  let gameLoopIntervalTimer;
+
+  function startGameLoop() {
+    if (gameLoopIntervalTimer) clearInterval(gameLoopIntervalTimer);
+    if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
+
+    gameLoopIntervalTimer = setInterval(update, 50);
+    spawnIntervalTimer = setInterval(() => {
+      if (!isGameOver) createObjeto();
+    }, 1500);
+  }
+
+  // Ajustar restart para iniciar loop
+  function restartGame() {
+    objetos.forEach(obj => game.removeChild(obj.element));
+    objetos = [];
+    score = 0;
+    lives = 3;
+    level = 1;
+    isGameOver = false;
+    mrbeanX = 160;
+    mrbean.style.left = mrbeanX + 'px';
+    catImage.style.left = mrbeanX + 'px';
+    catImage.style.display = 'none';
+    updateScoreboard();
+    gameoverScreen.style.display = 'none';
+
+    clearInterval(spawnIntervalTimer);
+    clearInterval(gameLoopIntervalTimer);
+    startGameLoop();
+  }
+</script>
+</body>
 </html>
+
 
 
